@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerifyOtp;
 
 class AuthController extends Controller
 {
@@ -105,12 +107,91 @@ class AuthController extends Controller
         return view('signup');
     }
 
-    
-    public function forgot_password(){
+    public function forgot_password()
+    {
         return view('forgot-password');
     }
 
-    public function verify_email(){
-        return view('verify-email');
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if ($user){
+            $otp = rand(100000, 999999);
+            $data = [
+                'otp' => $otp,
+                'name' => $user->name,
+                'email' => $request->email
+            ];
+
+            Mail::to($request->email)->send(new VerifyOtp($data));
+
+            $user->update([
+                'otp' => $otp
+            ]);
+
+            $request->session()->put('reset_email', $request->email);
+            return redirect()->route('verify-email');
+        } else {
+            return redirect()->route('forgot-password')->with('error', 'User not found');
+        }
+    }
+
+    public function verify_email()
+    {
+        $email = session('reset_email');
+        return view('verify-email', compact('email'));
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp'   => 'required',
+            'email' => 'required'
+        ]);
+
+        $otp = User::where('email', $request->email)->first();
+        if ($otp && $otp->otp == $request->otp) {
+            $otp->update([
+                'otp' => NULL
+            ]);
+
+            return redirect()->route('change-password');
+        } else {
+            return redirect()->route('forgot-password')->with('error', 'This OTP is not valid please enter valid OTP.');
+        }
+    }
+
+    public function changePassword()
+    {
+        $email = session('reset_email');
+
+        return view('change-password', compact('email'));
+    }
+
+    public function password(Request $request)
+    {
+        $request->validate([
+            'email'             => 'required|email',
+            'new_password'      => 'required',
+            'confirm_password'  => 'required|same:new_password'
+        ]);
+    
+        $user = User::where('email', $request->email)->first();
+    
+        if ($user) {
+            $user->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+    
+            $request->session()->forget('reset_email');
+    
+            return redirect()->route('login')->with('success', 'Password changed successfully');
+        } else {
+            return redirect()->route('change-password')->with('error', 'No user found with this email address');
+        }
     }
 }

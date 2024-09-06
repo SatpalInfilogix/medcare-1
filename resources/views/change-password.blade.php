@@ -25,24 +25,34 @@
                     @endif
                     <div class="log-in-box">
                         <div class="log-in-title">
-                            <h4>Forgot your password</h4>
+                            <h4>Change password</h4>
                         </div>
 
                         <div class="input-box">
-                            <form class="row g-4" id="forgot-password-form" action="{{ route('send-otp') }}" method="post">
+                            <form class="row g-4" id="change-password-form" action="{{ route('password') }}" method="post">
                                 @csrf
+                                <input type="hidden" name="email" value="{{$email}}">
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating log-in-form">
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
-                                        <label for="email">Email Address</label>
-                                        @if ($errors->has('email'))
-                                            <span class="invalid-feedback d-block">{{ $errors->first('email') }}</span>
+                                        <input type="password" class="form-control" id="new-password" name="new_password" placeholder="Password">
+                                        <label for="password">New Password</label>
+                                        @if ($errors->has('new_password'))
+                                            <span class="invalid-feedback d-block">{{ $errors->first('new_password') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating theme-form-floating log-in-form">
+                                        <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="Confirm Password">
+                                        <label for="confirm-password">Confirm Password</label>
+                                        @if ($errors->has('confirm_password'))
+                                            <span class="invalid-feedback d-block">{{ $errors->first('confirm_password') }}</span>
                                         @endif
                                     </div>
                                 </div>
 
                                 <div class="col-12">
-                                    <button class="btn btn-animation w-100" type="submit">Forgot Password</button>
+                                    <button class="btn btn-animation w-100" type="submit">Submit</button>
                                 </div>
                             </form>
                         </div>
