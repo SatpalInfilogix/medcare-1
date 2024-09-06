@@ -1,5 +1,5 @@
 @extends('layouts.frontend-layout')
-@section('title', 'Forgot Password')
+@section('title', 'Change Password')
 
 @section('content')
 <section class="log-in-section section-b-space forgot-section">

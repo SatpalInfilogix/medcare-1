@@ -28,7 +28,8 @@ class User extends Authenticatable
         'profile_pic',
         'password',
         'status',
-        'otp'
+        'otp',
+        'email_verified_at'
     ];
 
     /**

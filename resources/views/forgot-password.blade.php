@@ -13,23 +13,16 @@
 
             <div class="col-xxl-4 col-xl-5 col-lg-6 col-sm-8 mx-auto">
                 <div class="d-flex align-items-center justify-content-center h-100">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
-                    @endif
                     <div class="log-in-box">
+                        <x-success-message :message="session('success')" />
+                        <x-error-message :message="session('error')" />
+                        
                         <div class="log-in-title">
                             <h4>Forgot your password</h4>
                         </div>
 
                         <div class="input-box">
-                            <form class="row g-4" id="forgot-password-form" action="{{ route('send-otp') }}" method="post">
+                            <form class="row g-4" id="forgot-password-form" action="{{ route('reset-password') }}" method="post">
                                 @csrf
                                 <div class="col-12">
                                     <div class="form-floating theme-form-floating log-in-form">

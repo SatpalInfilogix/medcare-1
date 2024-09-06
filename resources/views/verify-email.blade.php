@@ -14,6 +14,9 @@
             <div class="col-xxl-4 col-xl-5 col-lg-6 col-sm-8 mx-auto">
                 <div class="d-flex align-items-center justify-content-center h-100">
                     <div class="log-in-box">
+                        <x-success-message :message="session('success')" />
+                        <x-error-message :message="session('error')" />
+                        
                     <form action="{{ route('verify-otp') }}" id="otp-form" class="signin-form" method="post">
                         @csrf
                         <div class="log-in-title">
